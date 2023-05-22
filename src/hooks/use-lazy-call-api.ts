@@ -3,19 +3,15 @@ import { requestConfig } from "../config/request";
 import axios, { Method } from "axios";
 import { CallApiProps } from "./types";
 
-function UseCallApi<T>({method, url, isLazy}:CallApiProps){
+function UseLazyCallApi<T>({method, url, isLazy}:CallApiProps): [(input: any)=>Promise<T | void>,{data:T | undefined, loading: boolean | undefined, error: any}]{
     const [data, setData] = useState<T>();
     const [loading, setLoading] = useState(isLazy);
     const [error, setError] = useState<any>();
 
-    useEffect(()=>{
-        if(!isLazy) getData();
-    },[])
-
-    async function getData(){
+    async function hitApi(input=null){
         setLoading(true);
         try {
-            const config = requestConfig({method, url});
+            const config = requestConfig({method, url, data: input});
             const response = await axios.request(config);
             setData(response.data as T);
         } catch (error) {
@@ -27,8 +23,8 @@ function UseCallApi<T>({method, url, isLazy}:CallApiProps){
         
     }
 
-    return {data, loading, error, refetch: getData}
+    return [hitApi, {data, loading, error}]
 
 }
 
-export { UseCallApi }
+export { UseLazyCallApi }

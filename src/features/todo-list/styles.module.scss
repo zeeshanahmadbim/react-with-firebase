@@ -1,0 +1,12 @@
+.todoList{
+    width: 50%;
+}
+.buttonContainer{
+    display: flex;
+    flex-flow: row-reverse;
+    margin: 10px;
+}
+.todoContainer{
+    display: flex;
+    justify-content: center;
+}
