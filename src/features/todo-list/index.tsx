@@ -54,12 +54,12 @@ function TodoList():ReactElement{
     }
 
     return <>
-        <div className={styles.buttonContainer}>
-            <Button onClick={onNewTaskClicked} color="primary">New Task</Button>
-        </div>
-        <h3>TODO LIST</h3>
+        
         <div className={styles.todoContainer}>
             <div className={styles.todoList}>
+                <div className={styles.buttonContainer}>
+                    <Button onClick={onNewTaskClicked} color="success">New Task</Button>
+                </div>
                 {data?.data?.map(task=> <TaskTile key={task.id} task={task} onClick={clickedOnTask}/>)}
             </div>
         </div>

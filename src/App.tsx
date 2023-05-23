@@ -1,17 +1,10 @@
 import { Layout, TodoList } from './features';
-import './App.css';
-import {initializeApp} from 'firebase/app';
-import {getAuth, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup} from 'firebase/auth';
 import { FireBaseProvider } from './providers/firebaseProvider';
+
+import './App.css';
 
 
 function App() {
-
-  async function authWithFirebase(){
-    
-    
-
-  }
 
   return (
     <div className="App">
