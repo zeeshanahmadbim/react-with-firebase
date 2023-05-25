@@ -2,7 +2,7 @@ import { Layout, TodoList } from './features';
 import { FireBaseProvider } from './providers/firebaseProvider';
 
 import './App.css';
-
+console.log(process.env)
 
 function App() {
 

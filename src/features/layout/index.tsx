@@ -1,6 +1,7 @@
 import { PropsWithChildren } from "react";
-import { handleSignOut, useFirebaseContext } from "../../providers/firebaseProvider";
+import { useFirebaseContext } from "../../providers/firebaseProvider";
 import { Button, DropdownItem, DropdownMenu, DropdownToggle, Nav, NavItem, Navbar, NavbarBrand, UncontrolledDropdown } from "reactstrap";
+import { handleSignOut } from "../../helpers/firebase";
 
 function Layout({children}:PropsWithChildren){
     const {googleAuth, currentUser}  = useFirebaseContext();

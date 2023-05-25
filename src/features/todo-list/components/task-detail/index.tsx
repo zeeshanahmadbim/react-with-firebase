@@ -1,8 +1,9 @@
 import { ReactElement, useState } from "react"
 import { Button, Input, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap"
-import { Task } from "../../../../types"
+// import { Task } from "../../../../types"
 
 import styles from './styles.module.scss';
+import { Task } from "../../../../data-mappers";
 
 type TaskDetailProps = {
     open: boolean,
@@ -12,7 +13,7 @@ type TaskDetailProps = {
     onDelete?:(task: Task)=>void
 }
 function TaskDetail({open, setOpen, task, onSave, onDelete}: TaskDetailProps):ReactElement{
-    const [taskLocal, setTaskLocal] = useState<Task>(task || {description:"", status:'open'});
+    const [taskLocal, setTaskLocal] = useState<Task>(task || new Task({description:""}));
 
     function updateTask(attribute: keyof Task, value: string){
         setTaskLocal({...taskLocal, [attribute]: value})

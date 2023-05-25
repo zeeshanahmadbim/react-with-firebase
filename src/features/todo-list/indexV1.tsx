@@ -1,32 +1,27 @@
 import { ReactElement, useState } from "react"
-import { UseFirebaseCall, UseLazyCallApi } from "../../hooks"
+import { UseCallApi, UseLazyCallApi } from "../../hooks"
 import { TaskDetail, TaskTile } from "./components";
-import { Task } from "../../types";
+import { ListTasksApi, Task } from "../../types";
 
 import { Button } from 'reactstrap';
 
 import styles from './styles.module.scss';
-import { UseGetTasksFromFirebase } from "./hooks";
-import { updateDocumentByRef } from "../../helpers";
 
-function TodoList():ReactElement{
+function TodoListV1():ReactElement{
     const [taskDetailOpen, setTaskDetailOpen] = useState(false);
     const [selectedTask, setSelectedTask] = useState<Task>();
 
-    const {data: firebaseTasks, loading, error} = UseGetTasksFromFirebase();
-
-    // const [updateFunction, {loading: updatingOnFE}] = UseFirebaseCall<Task>(true);
+    const {data, loading, error, refetch} = UseCallApi<ListTasksApi>({method:'GET',url:'task'});
 
     const [createTask,{loading: creating}] = UseLazyCallApi({method:'POST', url: 'task'});
     const [updateTask,{loading: updating}] = UseLazyCallApi({method:'PUT', url: 'task'});
     const [deleteTask,{loading: deleting}] = UseLazyCallApi({method:'DELETE', url: 'task'});
 
-    const tasks = firebaseTasks;
+    const tasks = data?.data;
 
     async function onSave(task: Task){
         if(task.id){
             await updateTask(task)
-            // const up =  updateFunction(updateDocumentByRef)
         }else{
             await createTask(task);
         }
@@ -40,7 +35,7 @@ function TodoList():ReactElement{
 
     function refreshData(){
         setTaskDetailOpen(false)
-        // refetch();
+        refetch();
     }
 
     function onNewTaskClicked(){
@@ -53,7 +48,7 @@ function TodoList():ReactElement{
         setTaskDetailOpen(true);
     }
 
-    if(loading || creating || updating || deleting ){
+    if(loading || creating || updating || deleting){
         return <>Loading...</>
     }
 
@@ -77,4 +72,4 @@ function TodoList():ReactElement{
     </>
 }
 
-export {TodoList}
+export {TodoListV1}

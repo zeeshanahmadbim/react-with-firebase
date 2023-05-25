@@ -1,31 +1,19 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { type FirebaseApp, initializeApp } from 'firebase/app'
+import { type FirebaseApp } from 'firebase/app'
 import { GoogleAuthProvider, type UserCredential, getAuth, onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
+import { GoogleAuthProps, getFirebaseApp } from '../helpers/firebase';
 
-const firebaseConfig = {
-  apiKey: 'AIzaSyCA_D5Jn1tN-cEFEHbDuZ7MjiC0JJZRwSU',
-  authDomain: 'testing-9b403.firebaseapp.com',
-  projectId: 'testing-9b403',
-  storageBucket: 'testing-9b403.appspot.com',
-  messagingSenderId: '257362910760',
-  appId: '1:257362910760:web:d7aba0efdb7861d01b5f1d',
-  measurementId: 'G-KWSGS3YWBS'
-}
 
 type UserProps = UserCredential['user'] | null | undefined
 
-type GoogleAuthProps = {
-  user: UserCredential['user']
-  accessToken: string | undefined
-} | undefined
 
-interface ContextProps {
+type ContextProps = {
   firebaseApp: FirebaseApp
   googleAuth: () => Promise<GoogleAuthProps>
   currentUser: UserProps
 }
 
-const firebaseApp = initializeApp(firebaseConfig)
+const firebaseApp = getFirebaseApp();
 const FirebaseContext = createContext<ContextProps>({ firebaseApp, googleAuth, currentUser: null })
 
 async function googleAuth (): Promise<GoogleAuthProps> {
@@ -60,15 +48,6 @@ function useGetAuth () {
   return getAuth()
 }
 
-function handleSignOut () {
-  const auth = getAuth()
-  signOut(auth).then(() => {
-    console.log('SignOut done!!!')
-  }).catch((error) => {
-    console.log('Something went wrong.')
-  })
-} 
-
 function FireBaseProvider ({ ...props }) {
   const [currentUser, setCurrentUser] = useState<UserProps>()
 
@@ -78,14 +57,10 @@ function FireBaseProvider ({ ...props }) {
   }, [])
 
   function handleAuthStateChange (user: UserProps) {
-    if (user != null) {
-      setCurrentUser(user)
-    } else {
-      console.log('User is logged out.')
-    }
+    setCurrentUser(user)
   }
 
   return <FirebaseContext.Provider value={{ firebaseApp, googleAuth, currentUser }} {...props}/>
 }
 
-export { useFirebaseContext, FireBaseProvider, useGoogleAuth, useGetAuth, handleSignOut }
+export { useFirebaseContext, FireBaseProvider, useGoogleAuth, useGetAuth }
