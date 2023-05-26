@@ -7,6 +7,7 @@ import { Button } from 'reactstrap';
 import styles from './styles.module.scss';
 import { UseGetTasksFromFirebase } from "./hooks";
 import { removeDoc, upsertDocument } from "../../helpers";
+import { CustomButton } from "../../components";
 
 function TodoList():ReactElement{
     const [taskDetailOpen, setTaskDetailOpen] = useState(false);
@@ -59,7 +60,7 @@ function TodoList():ReactElement{
         <div className={styles.todoContainer}>
             <div className={styles.todoList}>
                 <div className={styles.buttonContainer}>
-                    <Button onClick={onNewTaskClicked} color="success">New Task</Button>
+                    <CustomButton onClick={onNewTaskClicked} varient="light">New Task</CustomButton>
                 </div>
                 {tasks?.map(task=> <TaskTile key={task.id} task={task} onClick={clickedOnTask}/>)}
             </div>

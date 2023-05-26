@@ -1,0 +1,13 @@
+@import '../../util/util.module.scss';
+
+.light{
+    &.btn{
+        background: $primaryBackgroundColor;
+        color: $secondaryTextColor;
+        border-color: $secondaryTextColor;
+        &:hover{
+            background-color: $secondaryTextColor;
+            
+        }
+    }
+}
