@@ -22,7 +22,7 @@ function UseGetTasksFromFirebase(){
         }
     }
 
-    return { data, loading, error }
+    return { data, loading, error, refetch: getData }
 }
 
 export {UseGetTasksFromFirebase}

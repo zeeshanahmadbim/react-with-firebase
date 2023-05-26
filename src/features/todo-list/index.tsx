@@ -1,5 +1,4 @@
-import { ReactElement, useState } from "react"
-import { UseFirebaseCall, UseLazyCallApi } from "../../hooks"
+import { ReactElement, useState } from "react";
 import { TaskDetail, TaskTile } from "./components";
 import { Task } from "../../types";
 
@@ -7,40 +6,34 @@ import { Button } from 'reactstrap';
 
 import styles from './styles.module.scss';
 import { UseGetTasksFromFirebase } from "./hooks";
-import { updateDocumentByRef } from "../../helpers";
+import { removeDoc, upsertDocument } from "../../helpers";
 
 function TodoList():ReactElement{
     const [taskDetailOpen, setTaskDetailOpen] = useState(false);
     const [selectedTask, setSelectedTask] = useState<Task>();
+    const [isLoading, setIsLoading] = useState(false);
 
-    const {data: firebaseTasks, loading, error} = UseGetTasksFromFirebase();
-
-    // const [updateFunction, {loading: updatingOnFE}] = UseFirebaseCall<Task>(true);
-
-    const [createTask,{loading: creating}] = UseLazyCallApi({method:'POST', url: 'task'});
-    const [updateTask,{loading: updating}] = UseLazyCallApi({method:'PUT', url: 'task'});
-    const [deleteTask,{loading: deleting}] = UseLazyCallApi({method:'DELETE', url: 'task'});
+    const {data: firebaseTasks, loading: fetchingData, error, refetch} = UseGetTasksFromFirebase();
 
     const tasks = firebaseTasks;
 
     async function onSave(task: Task){
-        if(task.id){
-            await updateTask(task)
-            // const up =  updateFunction(updateDocumentByRef)
-        }else{
-            await createTask(task);
-        }
-        refreshData()
+        setIsLoading(true);
+        await upsertDocument('task', task);
+        setIsLoading(false);
+        refreshData();
     }
 
     async function onDelete(task: Task){
-        await deleteTask(task);
+        setIsLoading(true)
+        await removeDoc('task', task.id as string);
         refreshData();
+        setIsLoading(false)
     }
 
     function refreshData(){
         setTaskDetailOpen(false)
-        // refetch();
+        refetch();
     }
 
     function onNewTaskClicked(){
@@ -53,7 +46,7 @@ function TodoList():ReactElement{
         setTaskDetailOpen(true);
     }
 
-    if(loading || creating || updating || deleting ){
+    if(fetchingData || isLoading){
         return <>Loading...</>
     }
 

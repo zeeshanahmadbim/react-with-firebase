@@ -1,8 +1,7 @@
 import { GoogleAuthProvider, UserCredential, getAuth, signInWithPopup, signOut } from "firebase/auth"
 import { config } from "../config";
 import { FirebaseApp, initializeApp } from "firebase/app";
-import { DocumentData, DocumentSnapshot, FirestoreDataConverter, SnapshotOptions, collection, doc, getDoc, getDocs, getFirestore, query, updateDoc } from "firebase/firestore";
-import { Task } from "../data-mappers";
+import {  DocumentData, DocumentSnapshot, FirestoreDataConverter, SnapshotOptions, addDoc, collection, deleteDoc, doc, getDoc, getDocs, getFirestore, query, setDoc, updateDoc } from "firebase/firestore";
 
 type GoogleAuthProps = {
     user: UserCredential['user']
@@ -24,6 +23,14 @@ function getDbRef(){
   const app = getFirebaseApp();
   const db  = getFirestore(app);
   return db;
+}
+
+function getCollectionRef(collectionName: string){
+  return collection(getDbRef(), collectionName);
+}
+
+function getDocRef(collectionName: string, id: string){
+  return doc(getDbRef(), collectionName, id);
 }
 
 async function googleAuth (): Promise<GoogleAuthProps> {
@@ -85,11 +92,29 @@ async function getDocumentList<T>(collectionName: string):Promise<T[]>{
   return data;
 }
 
-async function updateDocumentByRef(collectionName: string, id: string, data: any){
-  const docRef = doc(getDbRef(), collectionName, id);
+async function upsertDocument(collectionName: string, data: any){
+  const action = data.id ? updateDocument : newDocument;
+  return await action(collectionName, data);
+}
+
+async function updateDocument(collectionName: string, data: any){
+  const docRef = getDocRef(collectionName, data.id);
   return await updateDoc(docRef, data)
 }
 
+async function newDocument(collectionName: string, data: any){
+  delete data['id']
+  try {
+    return await addDoc(getCollectionRef(collectionName), data);
+  } catch (error) {
+    console.log(`ERROR: ${error}`);
+  }
+}
+
+async function removeDoc(collectionName: string, id: string){
+  await deleteDoc(getDocRef(collectionName,id))
+}
+
 export type { GoogleAuthProps }
-export { googleAuth, getFirebaseApp, handleSignOut, getDbRef, dataConvertor, getDocumentByRef, getDocumentList, updateDocumentByRef }
+export { googleAuth, getFirebaseApp, handleSignOut, getDbRef, dataConvertor, getDocumentByRef, getDocumentList, removeDoc, upsertDocument }
   

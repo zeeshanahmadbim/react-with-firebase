@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-function UseFirebaseCall<T>(isLazy: boolean, callback?:()=>Promise<T>){
-    const [data, setData] = useState<T>();
+function UseFirebaseCall(isLazy: boolean, callback?:any){
+    const [data, setData] = useState();
     const [loading, setLoading] = useState(isLazy);
     const [error, setError] = useState<any>();
 
@@ -9,7 +9,7 @@ function UseFirebaseCall<T>(isLazy: boolean, callback?:()=>Promise<T>){
         callFunction(callback)
     }
 
-    async function callFunction(callback?: ()=>Promise<T>){
+    async function callFunction(callback?: ()=>Promise<any>){
         try {
             setLoading(true);
             if(callback){
@@ -34,6 +34,26 @@ function UseFirebaseCall<T>(isLazy: boolean, callback?:()=>Promise<T>){
     }
 
     return [higherOrderFunction, {data, loading, error, refetch: callFunction}]
+}
+
+
+function abc(callback: (...args: any[]) => void){
+    const [status, setStatus] = useState('idle');
+
+  const callCallback = (...args: any[]) => {
+    setStatus('loading');
+
+    // Simulate an asynchronous operation
+    setTimeout(() => {
+      callback(...args);
+      setStatus('success');
+    }, 1000);
+  };
+
+  useEffect(() => {
+    setStatus('idle');
+  }, [callback]);
+  return {status, callCallback}
 }
 
 export { UseFirebaseCall }
